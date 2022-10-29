@@ -1,4 +1,5 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import Pixi from "./PixiJs.vue"
 
-createApp(App).mount("#app");
+createApp(Pixi).mount("#app");
