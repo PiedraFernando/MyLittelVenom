@@ -13,17 +13,21 @@ export default {
       provDown: 0.3,
       provLeft: 0.3,
       provRight: 0.3,
+      interval: null,
+      mapElements: [],
     };
   },
   mounted() {
     const canvas = document.getElementById("canvas");
+    canvas.style.width = window.innerWidth - 10 + "px";
+    canvas.style.height = window.innerHeight - 10 + "px";
     this.context = canvas.getContext("2d");
     this.context.fillStyle = this.color;
     this.render();
   },
   methods: {
     render: function () {
-      setInterval(() => {
+      this.interval = setInterval(() => {
         this.travel();
       }, 1000 / this.frames);
     },
@@ -36,7 +40,7 @@ export default {
           element.y > 0 &&
           element.y < 150
         ) {
-          if (this.elements.length < 1500) {
+          if (this.elements.length < 1000) {
             //newTop
             if (Math.random() < this.provtop) {
               newArryElements.push({ ...element, y: element.y + this.step });
@@ -53,10 +57,6 @@ export default {
             if (Math.random() < this.provRight) {
               newArryElements.push({ ...element, x: element.x + this.step });
             }
-            //muere
-            if (Math.random() > this.provDead) {
-              newArryElements.push(element);
-            }
           } else {
             //muere
             if (Math.random() > this.provDead) {
@@ -69,15 +69,32 @@ export default {
       this.elements = newArryElements;
     },
     drawElement(element) {
+      // if (this.mapElements.includes(element)) {
+      //   this.context.fillStyle = "white";
+      //   this.context.fillRect(element.x, element.y, this.size, this.size);
+      // } else {
+      //   this.context.fillStyle = "black";
+      //   this.context.fillRect(element.x, element.y, this.size, this.size);
+      //   this.mapElements.push(element);
+      // }
       this.context.fillRect(element.x, element.y, this.size, this.size);
+    },
+    addVenom(e) {
+      const canvas = document.getElementById("canvas");
+      const canvasWidth = canvas.offsetWidth;
+      const canvasHeight = canvas.offsetHeight;
+      const posX = e.clientX / (canvasWidth / 300);
+      const posY = e.clientY / (canvasHeight / 150);
+      for (let i = 0; i < 20; i++) {
+        this.elements.unshift({ x: posX, y: posY });
+      }
     },
   },
 };
 </script>
 
 <template>
-  <canvas class="full" id="canvas"></canvas>
-
+  <canvas @mousedown="addVenom" id="canvas"></canvas>
 </template>
 
 <style>
@@ -90,17 +107,9 @@ export default {
 .text-center {
   text-align: center;
 }
-.full {
-  width: 95vw;
-  height: 93vh;
-}
 .center {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-.xl {
-  width: 600px;
-  height: 300px;
 }
 </style>
